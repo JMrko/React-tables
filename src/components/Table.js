@@ -1,22 +1,21 @@
 import React, { useMemo } from "react";
-import { useTable, usePagination, useFilters} from "react-table";
+import { useTable, usePagination, useFilters, useExpanded, useGroupBy, useSortBy} from "react-table";
 import MOCK_DATA from "./MOCK_DATA.json";
-import { COLUMNS } from "./columns";
+import { COLUMN_GROUP } from "./columns";
 import "./style.css";
 import { Checkbox } from "./Checkbox";
-import { ColumnFilter } from './ColumnFilter'
-import { SelectColumnFilter} from './SelectColumnFilter'
+import { ColumnFilter } from "./ColumnFilter";
 
 export const Table = () => {
-  const columns = useMemo(() => COLUMNS, []);
+  const columns = useMemo(() => COLUMN_GROUP, []);
   const data = useMemo(() => MOCK_DATA, []);
 
   const defaultColumn = React.useMemo(
     () => ({
-      Filter: ColumnFilter
+      Filter: ColumnFilter,
     }),
     []
-  )
+  );
 
   const {
     getTableProps,
@@ -40,13 +39,15 @@ export const Table = () => {
       columns,
       data,
       initialState: { pageIndex: 0 },
-      defaultColumn
+      defaultColumn,
     },
     useFilters,
-    usePagination,
-    
+    useGroupBy,
+    useSortBy,
+    useExpanded,
+    usePagination
   );
-  const { pageIndex, pageSize} = state;
+  const { pageIndex, pageSize } = state;
 
   return (
     <>
@@ -70,9 +71,24 @@ export const Table = () => {
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()}>
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    {column.canGroupBy ? (
+                      // If the column can be grouped, let's add a toggle
+                      <span {...column.getGroupByToggleProps()}>
+                        {column.isGrouped ? "🛑 " : "👊 "}
+                      </span>
+                    ) : null}
                     {column.render("Header")}
-                    <div className="fields_filter">{column.canFilter ? column.render('Filter') : null}</div>
+                    <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? ' 🔽'
+                        : ' 🔼'
+                      : ''}
+                    </span>
+                    <div className="fields_filter">
+                      {column.canFilter ? column.render("Filter") : null}
+                    </div>
                   </th>
                 ))}
               </tr>
@@ -85,7 +101,35 @@ export const Table = () => {
                 <tr {...row.getRowProps()}>
                   {row.cells.map((cell) => {
                     return (
-                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                      <td
+                        {...cell.getCellProps()}
+                        style={{
+                          background: cell.isGrouped
+                            ? "#0aff0082"
+                            : cell.isAggregated
+                            ? "#ffa50078"
+                            : cell.isPlaceholder
+                            ? "#ff000042"
+                            : "white",
+                        }}
+                      >
+                        {cell.isGrouped ? (
+                          // If it's a grouped cell, add an expander and row count
+                          <>
+                            <span {...row.getToggleRowExpandedProps()}>
+                              {row.isExpanded ? "👇" : "👉"}
+                            </span>{" "}
+                            {cell.render("Cell")} ({row.subRows.length})
+                          </>
+                        ) : cell.isAggregated ? (
+                          // If the cell is aggregated, use the Aggregated
+                          // renderer for cell
+                          cell.render("Aggregated")
+                        ) : cell.isPlaceholder ? null : ( // For cells with repeated values, render null
+                          // Otherwise, just render the regular cell
+                          cell.render("Cell")
+                        )}
+                      </td>
                     );
                   })}
                 </tr>

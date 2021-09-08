@@ -1,8 +1,6 @@
-import React, {useState} from 'react'
+import React from 'react'
 
 export const SelectColumnFilter = ({column}) => {
-
-    const [state, setstate] = useState([])
 
     const { filterValue, setFilter, preFilteredRows, id } = column
     // Calculate the options for filtering
@@ -20,12 +18,12 @@ export const SelectColumnFilter = ({column}) => {
       <select
         value={filterValue}
         onChange={e => {
-            console.log(state)
-            state.push(e.target.value)
-            // setstate(nuevoArray)  
-            console.log(state)
-            setFilter(state)
-
+            // console.log(state)
+            // state.push(e.target.value)
+            // // setstate(nuevoArray)  
+            // console.log(state)
+            // setFilter(state)
+            setFilter(e.target.value || undefined)
         }}
       >
         <option value="">All</option>

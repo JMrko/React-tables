@@ -1,5 +1,116 @@
 import { format } from 'date-fns'
 import { SelectColumnFilter} from './SelectColumnFilter'
+export const COLUMN_GROUP = [
+  {
+    Header: 'First Name',
+    accessor: 'first_name',
+    aggregate: 'count',
+    Filter: SelectColumnFilter,
+    Aggregated: ({ value }) => `${value} Names`,
+  },
+  {
+    Header: 'Last Name',
+    accessor: 'last_name',
+    aggregate: 'uniqueCount',
+    Aggregated: ({ value }) => `${value} Unique Names`,
+  },
+  {
+    Header: 'Email',
+    accessor: 'email',
+    aggregate: 'uniqueCount',
+    Aggregated: ({ value }) => `${value} Unique Emails`,
+  },
+  {
+    Header: 'Date Birth',
+    accessor: 'date_of_birth',
+    aggregate: 'uniqueCount',
+    Cell: ({ value }) => {
+      return format(new Date(value), 'dd/MM/yyyy')
+    },
+    Aggregated: ({ value }) => `${value} Unique Births`,
+  },
+  {
+    Header: 'Country',
+    accessor: 'country',
+    aggregate: 'uniqueCount',
+    Aggregated: ({ value }) => `${value} Unique countries`,
+  },
+  {
+    Header: 'Phone',
+    accessor: 'phone',
+    aggregate: 'uniqueCount',
+    Aggregated: ({ value }) => `${value} Unique phones`,
+  },
+  {
+    Header: 'Age',
+    accessor: 'age',
+    aggregate: 'average',
+    Aggregated: ({ value }) => `${Math.round(value * 100) / 100} (avg)`,
+  },
+]
+export const COLUMN_ROW = [
+  {
+    Header: () => null,
+    id: 'expander', 
+    Cell: ({ row }) => (
+      <span {...row.getToggleRowExpandedProps()}>  
+        {row.isExpanded ? '👇' : '👉'}
+      </span>
+    ),
+    SubCell: () => null 
+  },
+  {
+    Header: 'Name',
+    columns: [
+      {
+        Header: 'First Name',
+        accessor: (d) => d.first_name,
+        SubCell: (cellProps) => (
+          <> {cellProps.value} </>
+        ),
+        Filter: SelectColumnFilter,
+        filter: 'includes',
+      },
+      {
+        Header: 'Last Name',
+        accessor: (d) => d.last_name
+      }
+    ]
+  },
+  {
+    Header: 'Info',
+    columns: [
+      {
+        Header: ' Email',
+        accessor: (d) => d.email
+      },
+      {
+        Header: 'Date of Birth',
+        accessor: (d) => d.date_of_birth,
+        Cell: ({ value }) => {
+          return format(new Date(value), 'dd/MM/yyyy')
+        }
+      },
+      {
+        Header: 'Country',
+        accessor: (d) => d.country
+      },
+      {
+        Header: 'Phone',
+        accessor: (d) => d.phone
+      },
+      {
+        Header: 'Email',
+        accessor: (d) => d.email
+      },
+      {
+        Header: 'Age',
+        accessor: (d) => d.age
+      }
+    ]
+  }
+]
+
 export const COLUMNS = [
   {
     Header: 'Id',

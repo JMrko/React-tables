@@ -71,20 +71,19 @@ export const Table = () => {
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  <th {...column.getHeaderProps()}>
                     {column.canGroupBy ? (
-                      // If the column can be grouped, let's add a toggle
                       <span {...column.getGroupByToggleProps()}>
                         {column.isGrouped ? "🛑 " : "👊 "}
                       </span>
                     ) : null}
                     {column.render("Header")}
-                    <span>
+                    <span {...column.getHeaderProps(column.getSortByToggleProps())}> 
                     {column.isSorted
                       ? column.isSortedDesc
                         ? ' 🔽'
                         : ' 🔼'
-                      : ''}
+                      : '  ➖'}
                     </span>
                     <div className="fields_filter">
                       {column.canFilter ? column.render("Filter") : null}

@@ -1,15 +1,28 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useTable, usePagination, useFilters, useExpanded, useGroupBy, useSortBy} from "react-table";
 import MOCK_DATA from "./MOCK_DATA.json";
-import { COLUMN_GROUP } from "./columns";
+import { COLUMN_GROUP, COLUMN_GROUP2 } from "./columns";
 import "./style.css";
 import { Checkbox } from "./Checkbox";
 import { ColumnFilter } from "./ColumnFilter";
+import { FetchData } from "../helper/Helper";
 
 export const Table = () => {
-  const columns = useMemo(() => COLUMN_GROUP, []);
-  const data = useMemo(() => MOCK_DATA, []);
-
+  const columns = useMemo(() => COLUMN_GROUP2, []);
+  const [data, setdata] = useState([])
+  const [button, setbutton] = useState(true)
+  console.log(button)
+  useEffect(() => {
+    (async()=>{
+      await FetchData('https://pre-back.leadsmartview.com/mostrar/controlArchivos')
+      .then(data =>{
+        setdata(data.datos);
+      })
+      .then(console.log)
+      .catch(e=>console.log(e.message))
+    })();
+  }, [button])
+ 
   const defaultColumn = React.useMemo(
     () => ({
       Filter: ColumnFilter,
@@ -51,6 +64,14 @@ export const Table = () => {
 
   return (
     <>
+    <div className='buttons'>
+          <button onClick={()=>{ setbutton(!button)} }>
+             RECARGAR DATOS
+          </button>
+          <button>
+             CANCELAR CARGA DE DATOS
+          </button>
+      </div>
       <div className="box_hiding">
         <div>
           <Checkbox {...getToggleHideAllColumnsProps()} /> Toggle All
@@ -184,6 +205,7 @@ export const Table = () => {
           </select>
         </div>
       </div>
+      
     </>
   );
 };

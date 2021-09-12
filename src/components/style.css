@@ -31,12 +31,12 @@ tfoot td {
 .box_table {
   width: 90%;
   position: relative;
-  top: 124px;
+  top: 75px;
   margin-left: 6%;
 }
 .box_hiding {
   position: relative;
-  top: 81px;
+  top: 67px;
   display: flex;
   margin-left: 24%;
 }
@@ -47,5 +47,11 @@ tfoot td {
 }
 .fields_filter{
   position: relative;
-  top: -150px;
+  top: -136px;
+}
+
+.buttons{
+  position: relative;
+    left: 6%;
+    margin-top: 15px;
 }

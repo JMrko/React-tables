@@ -18,11 +18,6 @@ export const SelectColumnFilter = ({column}) => {
       <select
         value={filterValue}
         onChange={e => {
-            // console.log(state)
-            // state.push(e.target.value)
-            // // setstate(nuevoArray)  
-            // console.log(state)
-            // setFilter(state)
             setFilter(e.target.value || undefined)
         }}
       >

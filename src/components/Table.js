@@ -1,28 +1,31 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useTable, usePagination, useFilters, useExpanded, useGroupBy, useSortBy} from "react-table";
-import MOCK_DATA from "./MOCK_DATA.json";
-import { COLUMN_GROUP, COLUMN_GROUP2 } from "./columns";
+import { COLUMN_GROUP2 } from "./columns";
 import "./style.css";
 import { Checkbox } from "./Checkbox";
 import { ColumnFilter } from "./ColumnFilter";
-import { FetchData } from "../helper/Helper";
+import { FetchData, abortFetching } from "../helper/Helper";
+
 
 export const Table = () => {
   const columns = useMemo(() => COLUMN_GROUP2, []);
   const [data, setdata] = useState([])
-  const [button, setbutton] = useState(true)
-  console.log(button)
+  
+  const cargarData = ()=>{
+    FetchData('https://pre-back.leadsmartview.com/mostrar/controlArchivos')
+    .then(data =>{
+      setdata(data.datos);
+    })
+    .then(console.log(`Fetch complete. (Not aborted)`))
+    .catch(e=>console.log(e.message))
+    setAllFilters([])
+  }
+  
   useEffect(() => {
-    (async()=>{
-      await FetchData('https://pre-back.leadsmartview.com/mostrar/controlArchivos')
-      .then(data =>{
-        setdata(data.datos);
-      })
-      .then(console.log)
-      .catch(e=>console.log(e.message))
-    })();
-  }, [button])
- 
+    cargarData();
+  }, [])
+
+
   const defaultColumn = React.useMemo(
     () => ({
       Filter: ColumnFilter,
@@ -46,6 +49,7 @@ export const Table = () => {
     setPageSize,
     prepareRow,
     allColumns,
+    setAllFilters,
     getToggleHideAllColumnsProps,
   } = useTable(
     {
@@ -65,10 +69,13 @@ export const Table = () => {
   return (
     <>
     <div className='buttons'>
-          <button onClick={()=>{ setbutton(!button)} }>
+          <button onClick={ cargarData }>
              RECARGAR DATOS
           </button>
-          <button>
+          {/* <button onClick={() =>setAllFilters([])}>
+            SET FILTER
+          </button> */}
+          <button onClick={abortFetching}>
              CANCELAR CARGA DE DATOS
           </button>
       </div>

@@ -3,6 +3,7 @@ import React from 'react'
 export const SelectColumnFilter = ({column}) => {
 
     const { filterValue, setFilter, preFilteredRows, id } = column
+    console.log(column)
     // Calculate the options for filtering
     // using the preFilteredRows
     const options = React.useMemo(() => {

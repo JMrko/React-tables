@@ -1,16 +1,18 @@
+import {OBTENER_DATOS_TABLA} from '../../../Constantes/Tabla/DatosTabla'
+
 let controller = new AbortController()
 let signal = controller.signal
 
-export const FetchData = async(url='',data={})=>{
-    console.log(controller)
-    
+export const iniciarObtenerDatos = (payload) =>({
+    type: OBTENER_DATOS_TABLA,
+    ...payload
+})
+
+export const peticionFetch = async(url='',data={})=>{
     if (controller.signal.aborted) {
-        
         controller = new AbortController()
         signal = controller.signal
-
     }
-    console.log('Now fetching');
     const response = await fetch(url,{
         method: 'POST',
         signal: signal,
@@ -24,8 +26,7 @@ export const FetchData = async(url='',data={})=>{
    return response.json();
 }
 
-export function abortFetching() {
-    console.log('Now aborting');
+export function cancelarPeticionFetch() {
     controller.abort();
   }
  

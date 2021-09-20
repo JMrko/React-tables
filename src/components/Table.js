@@ -1,28 +1,26 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useTable, usePagination, useFilters, useExpanded, useGroupBy, useSortBy} from "react-table";
-import { COLUMN_GROUP2 } from "./columns";
+import { COLUMNAS } from "./columns";
 import "./style.css";
 import { Checkbox } from "./Checkbox";
 import { ColumnFilter } from "./ColumnFilter";
-import { FetchData, abortFetching } from "../helper/Helper";
-
+import { useSelector, useDispatch } from 'react-redux';
+import { iniciarObtenerDatos, cancelarPeticionFetch } from '../Redux/Actions/Tabla/AccionesTabla'
 
 export const Table = () => {
-  const columns = useMemo(() => COLUMN_GROUP2, []);
-  const [data, setdata] = useState([])
+  const dispatch = useDispatch();
+  const {dataList} = useSelector((state) => state.tabla)
+  const columns = useMemo(() => COLUMNAS, []);
+  const [data, setdata] = useState([]);
   
-  const cargarData = ()=>{
-    FetchData('https://pre-back.leadsmartview.com/mostrar/controlArchivos')
-    .then(data =>{
-      setdata(data.datos);
-    })
-    .then(console.log(`Fetch complete. (Not aborted)`))
-    .catch(e=>console.log(e.message))
+  const cargarDatosTabla = ()=>{
+    dispatch(iniciarObtenerDatos())
+    setdata(dataList)
     setAllFilters([])
   }
   
   useEffect(() => {
-    cargarData();
+    cargarDatosTabla()
   }, [])
 
 
@@ -69,13 +67,10 @@ export const Table = () => {
   return (
     <>
     <div className='buttons'>
-          <button onClick={ cargarData }>
+          <button onClick={ cargarDatosTabla }>
              RECARGAR DATOS
           </button>
-          {/* <button onClick={() =>setAllFilters([])}>
-            SET FILTER
-          </button> */}
-          <button onClick={abortFetching}>
+          <button onClick={cancelarPeticionFetch}>
              CANCELAR CARGA DE DATOS
           </button>
       </div>
